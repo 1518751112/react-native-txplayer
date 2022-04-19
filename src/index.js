@@ -28,6 +28,7 @@ const Player = forwardRef(
       setAutoPlay,
       onChangeBitrate,
       onProgress,
+      isCustomStyle,
       onPrepare,
       isLandscape,
       ...restProps
@@ -158,7 +159,7 @@ const Player = forwardRef(
     const isOrientationLandscape = isLandscape;
 
     const fullscreenStyle = {
-      
+
       width: isOrientationLandscape
         ? Math.max(screen.width, screen.height)
         : Math.min(screen.width, screen.height),
@@ -180,14 +181,14 @@ const Player = forwardRef(
         : Math.max(window.width, window.height),
     };
     return (
-      <View style={[styles.base, isFull ? fullscreenStyle : style]}>
+      <View style={[styles.base, isFull ? isCustomStyle?style:fullscreenStyle : style]}>
         <TXViewPlayer
           {...restProps}
           ref={playerRef}
           source={playSource}
           setAutoPlay={setAutoPlay}
           selectBitrateIndex={bitrateIndex}
-          style={isFull ? fullwindowStyle : StyleSheet.absoluteFill}
+          style={isFull ? isCustomStyle? StyleSheet.absoluteFill : fullwindowStyle : StyleSheet.absoluteFill}
           onTXVodPrepare={() => {
             if (isPlaying) {
               playerRef.current.startPlay();
@@ -275,6 +276,7 @@ Player.propTypes = {
   themeColor: PropTypes.string, // 播放器主题
   enableCast: PropTypes.bool, // 是否显示投屏按钮
     progressBar: PropTypes.bool, // 是否显示进度条
+    isCustomStyle: PropTypes.bool, // 全屏是否使用自定义样式
   onCastClick: PropTypes.func, // 投屏按钮点击事件
   onChangeBitrate: PropTypes.func, // 切换清晰度
   onProgress: PropTypes.func, // 进度回调
