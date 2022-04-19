@@ -1,7 +1,7 @@
 {
   "name": "@tg1518/react-native-txplayer",
-  "version": "1.0.3",
-  "description": "RNÌÚÑ¶ÔÆ²¥·Å×é¼þ",
+  "version": "1.0.35",
+  "description": "RNè…¾è®¯äº‘æ’­æ”¾ç»„ä»¶",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
