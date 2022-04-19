@@ -39,6 +39,7 @@ const source='http://200024424.vod.myqcloud.com/200024424_709ae516bdf811e6ad3999
 | onFullScreen     | 全屏事件         |
 | onCompletion     | 播放完毕事件     |
 | enableCast       | 是否显示投屏按钮 |
+| isCustomStyle    | 全屏是否使用自定义样式 |
 | onCastClick      | 投屏按钮点击事件 |
 | onChangeBitrate  | 分辨率切换       |
 | onProgress       | 进度回调         |
