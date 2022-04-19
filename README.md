@@ -1,26 +1,31 @@
-# react-native-txplayer
+# @tg1518/react-native-txplayer
 
-腾讯云点播播放器 RN 封装,支持多种播放格式,支持 android 和 ios
+腾讯云点播播放器 RN 封装,支持多种播放格式,支持 android 和 ios 【搬砖修改】
 
 ## Getting started
 
-`$ npm install react-native-txplayer --save`
+`$ npm install @tg1518/react-native-txplayer --save`
 
 ### Mostly automatic installation
 
-`$ react-native link react-native-txplayer`
+`$ react-native link @tg1518/react-native-txplayer`
 
 ### Manual installation
 
 ## Usage
 
 ```javascript
-import RNTXplayer from 'react-native-txplayer';
+import RNTXplayer from '@tg1518/react-native-txplayer';
 
 const source='http://200024424.vod.myqcloud.com/200024424_709ae516bdf811e6ad39991f76a4df69.f20.mp4'
 
-<RNTXplayer source={source} style={{ width: screenWidth, height: 200 }} />;
+<RNTXplayer source={source} progressBar={true} style={{ width: screenWidth, height: 200 }} />;
 ```
+## 更新
+####2022/4/19
+修改了全屏不旋转手机
+添加是否显示进度条 【主要用于直播隐藏进度条】
+
 
 ## Props
 
@@ -29,6 +34,7 @@ const source='http://200024424.vod.myqcloud.com/200024424_709ae516bdf811e6ad3999
 | source           | 播放资源         |
 | poster           | 封面图           |
 | enableFullScreen | 是否允许全屏     |
+| progressBar      | 是否显示进度条     |
 | themeColor       | 主题色           |
 | onFullScreen     | 全屏事件         |
 | onCompletion     | 播放完毕事件     |
@@ -37,7 +43,6 @@ const source='http://200024424.vod.myqcloud.com/200024424_709ae516bdf811e6ad3999
 | onChangeBitrate  | 分辨率切换       |
 | onProgress       | 进度回调         |
 | onPrepare        | 播放准备回调     |
-| isLandscape      | 全屏是否横屏     |
 
 ## Method
 

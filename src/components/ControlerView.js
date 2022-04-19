@@ -73,6 +73,7 @@ function ControlerView({
   total,
   isPlaying,
   enableFullScreen,
+   progressBar,
   enableCast,
   playSource,
   bitrateList,
@@ -219,19 +220,23 @@ function ControlerView({
           onPress={isPlaying ? onPressPause : onPressPlay}
           name={isPlaying ? 'pausecircleo' : 'playcircleo'}
         />
-        <Text style={styles.textTime}>{`${currentFormat.M}:${currentFormat.S}`}</Text>
-        <Slider
-          progress={current}
-          min={0}
-          max={total}
-          cache={buffer}
-          style={styles.bottomSlide}
-          onSlidingComplete={(value) => {
-            onSlide(parseInt(value));
-          }}
-          themeColor={themeColor}
-        />
-        <Text style={styles.textTime}>{`${totalFormat.M}:${totalFormat.S}`}</Text>
+          {progressBar && (
+              <>
+                  <Text style={styles.textTime}>{`${currentFormat.M}:${currentFormat.S}`}</Text>
+                  <Slider
+                      progress={current}
+                      min={0}
+                      max={total}
+                      cache={buffer}
+                      style={styles.bottomSlide}
+                      onSlidingComplete={(value) => {
+                          onSlide(parseInt(value));
+                      }}
+                      themeColor={themeColor}
+                  />
+                  <Text style={styles.textTime}>{`${totalFormat.M}:${totalFormat.S}`}</Text>
+              </>
+          )}
         {enableFullScreen && (
           <ControlIcon
             onPress={isFull ? onPressFullOut : onPressFullIn}

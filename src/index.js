@@ -6,6 +6,7 @@ import { hideNavigationBar, showNavigationBar } from 'react-native-navigation-ba
 
 import TXViewPlayer from './TXViewPlayer';
 import ControlerView from './components/ControlerView';
+import Orientation from "react-native-orientation-locker";
 
 const styles = StyleSheet.create({
   base: {
@@ -135,12 +136,14 @@ const Player = forwardRef(
       setIsFull(true);
       onFullScreen(true);
       hideNavigationBar();
+    Orientation.lockToLandscape()
     };
 
     const handleFullScreenOut = () => {
       onFullScreen(false);
       setIsFull(false);
       showNavigationBar();
+    Orientation.lockToPortrait()
     };
 
     const handleChangeConfig = (config) => {
@@ -155,9 +158,7 @@ const Player = forwardRef(
     const isOrientationLandscape = isLandscape;
 
     const fullscreenStyle = {
-      position: 'absolute',
-      top: 0,
-      left: 0,
+      
       width: isOrientationLandscape
         ? Math.max(screen.width, screen.height)
         : Math.min(screen.width, screen.height),
@@ -273,6 +274,7 @@ Player.propTypes = {
   enableFullScreen: PropTypes.bool, // 是否允许全屏
   themeColor: PropTypes.string, // 播放器主题
   enableCast: PropTypes.bool, // 是否显示投屏按钮
+    progressBar: PropTypes.bool, // 是否显示进度条
   onCastClick: PropTypes.func, // 投屏按钮点击事件
   onChangeBitrate: PropTypes.func, // 切换清晰度
   onProgress: PropTypes.func, // 进度回调
