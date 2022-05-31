@@ -22,7 +22,7 @@ const source='http://200024424.vod.myqcloud.com/200024424_709ae516bdf811e6ad3999
 <RNTXplayer source={source} progressBar={true} style={{ width: screenWidth, height: 200 }} />;
 ```
 ## 更新
-####2022/4/19
+2022/4/19
 修改了全屏不旋转手机
 添加是否显示进度条 【主要用于直播隐藏进度条】
 
