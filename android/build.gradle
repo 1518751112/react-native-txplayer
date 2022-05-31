@@ -49,5 +49,5 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'com.tencent.liteav:LiteAVSDK_Professional:latest.release'
+    implementation 'com.tencent.liteav:LiteAVSDK_Professional:9.5.11582'
 }
