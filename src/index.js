@@ -16,267 +16,272 @@ const styles = StyleSheet.create({
 });
 
 const Player = forwardRef(
-  (
-    {
-      title,
-      source,
-      poster,
-      style,
-      themeColor,
-      onFullScreen,
-      onCompletion,
-      setAutoPlay,
-      onChangeBitrate,
-      onProgress,
-      isCustomStyle,
-      onPrepare,
-      isLandscape,
-      ...restProps
-    },
-    ref
-  ) => {
-    const playerRef = useRef();
-    const [playSource, setPlaySource] = useState(source);
-    const [error, setError] = useState(false);
-    const [errorObj, setErrorObj] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [isFull, setIsFull] = useState(false);
-    const [isComplate, setIsComplate] = useState(false);
-    const [isStopPlay, setIsStopPlay] = useState(false);
-    const [isPlaying, setIsPlaying] = useState(setAutoPlay);
-    const [total, setTotal] = useState(0);
-    const [current, setCurrent] = useState(0);
-    const [buffer, setBuffer] = useState(0);
-    const [isStart, setIsStart] = useState(false);
-    const [bitrateList, setBitrateList] = useState([]);
-    const [bitrateIndex, setBitrateIndex] = useState();
-    const { screen, window } = useDimensions();
-    const currentAppState = useAppState();
+    (
+        {
+          title,
+          source,
+          poster,
+          style,
+          themeColor,
+          onFullScreen,
+          onPlay,
+          onCompletion,
+          setAutoPlay,
+          onChangeBitrate,
+          onProgress,
+          isCustomStyle,
+          onPrepare,
+          isLandscape,
+          ...restProps
+        },
+        ref
+    ) => {
+      const playerRef = useRef();
+      const [playSource, setPlaySource] = useState(source);
+      const [error, setError] = useState(false);
+      const [errorObj, setErrorObj] = useState({});
+      const [loading, setLoading] = useState(true);
+      const [isFull, setIsFull] = useState(false);
+      const [isComplate, setIsComplate] = useState(false);
+      const [isStopPlay, setIsStopPlay] = useState(false);
+      const [isPlaying, setIsPlaying] = useState(setAutoPlay);
+      const [total, setTotal] = useState(0);
+      const [current, setCurrent] = useState(0);
+      const [buffer, setBuffer] = useState(0);
+      const [isStart, setIsStart] = useState(false);
+      const [bitrateList, setBitrateList] = useState([]);
+      const [bitrateIndex, setBitrateIndex] = useState();
+      const { screen, window } = useDimensions();
+      const currentAppState = useAppState();
 
-    useImperativeHandle(ref, () => ({
-      play: (play) => {
-        if (play) {
-          handlePlay();
-        } else {
-          handlePause();
+      useImperativeHandle(ref, () => ({
+        play: (play) => {
+          if (play) {
+            handlePlay();
+          } else {
+            handlePause();
+          }
+        },
+        fullscreen: (full) => {
+          if (full) {
+            handleFullScreenIn();
+          } else {
+            handleFullScreenOut();
+          }
+        },
+        stop: handleStop,
+        seekTo: handleSlide,
+      }));
+
+      // 处理切换资源
+      useEffect(() => {
+        if (source) {
+          changeSource(source);
         }
-      },
-      fullscreen: (full) => {
-        if (full) {
-          handleFullScreenIn();
-        } else {
+      }, [source]);
+
+      useEffect(() => {
+        if (currentAppState === 'background') {
+          playerRef.current.pausePlay();
+          setIsPlaying(false);
+        }
+      }, [currentAppState]);
+
+      useBackHandler(() => {
+        if (isFull) {
           handleFullScreenOut();
+          return true;
         }
-      },
-      stop: handleStop,
-      seekTo: handleSlide,
-    }));
+        return false;
+      });
 
-    // 处理切换资源
-    useEffect(() => {
-      if (source) {
-        changeSource(source);
-      }
-    }, [source]);
+      const changeSource = (src) => {
+        setPlaySource(src);
+        setLoading(true);
+        setError(false);
+      };
 
-    useEffect(() => {
-      if (currentAppState === 'background') {
+      const handlePlay = () => {
+        if (isComplate) {
+          playerRef.current.restartPlay();
+          setIsComplate(false);
+        } else if (isStopPlay) {
+          playerRef.current.reloadPlay();
+        } else {
+          playerRef.current.startPlay();
+        }
+        setIsPlaying(true);
+        onPlay(true);
+      };
+
+      const handlePause = () => {
         playerRef.current.pausePlay();
         setIsPlaying(false);
-      }
-    }, [currentAppState]);
+        onPlay(false);
 
-    useBackHandler(() => {
-      if (isFull) {
-        handleFullScreenOut();
-        return true;
-      }
-      return false;
-    });
+      };
 
-    const changeSource = (src) => {
-      setPlaySource(src);
-      setLoading(true);
-      setError(false);
-    };
-
-    const handlePlay = () => {
-      if (isComplate) {
-        playerRef.current.restartPlay();
-        setIsComplate(false);
-      } else if (isStopPlay) {
+      const handleReload = () => {
+        setError(false);
         playerRef.current.reloadPlay();
-      } else {
-        playerRef.current.startPlay();
-      }
-      setIsPlaying(true);
-    };
+      };
 
-    const handlePause = () => {
-      playerRef.current.pausePlay();
-      setIsPlaying(false);
-    };
+      const handleSlide = (value) => {
+        playerRef.current.seekTo(value);
+      };
 
-    const handleReload = () => {
-      setError(false);
-      playerRef.current.reloadPlay();
-    };
+      const handleStop = () => {
+        playerRef.current.stopPlay();
+        setIsStopPlay(true);
+        setIsPlaying(false);
+        setIsStart(false);
+      };
 
-    const handleSlide = (value) => {
-      playerRef.current.seekTo(value);
-    };
+      const handleFullScreenIn = () => {
+        setIsFull(true);
+        onFullScreen(true);
+        hideNavigationBar();
+        Orientation.lockToLandscape()
+      };
 
-    const handleStop = () => {
-      playerRef.current.stopPlay();
-      setIsStopPlay(true);
-      setIsPlaying(false);
-      setIsStart(false);
-    };
+      const handleFullScreenOut = () => {
+        onFullScreen(false);
+        setIsFull(false);
+        showNavigationBar();
+        Orientation.lockToPortrait()
+      };
 
-    const handleFullScreenIn = () => {
-      setIsFull(true);
-      onFullScreen(true);
-      hideNavigationBar();
-    Orientation.lockToLandscape()
-    };
+      const handleChangeConfig = (config) => {
+        playerRef.current.setNativeProps(config);
+      };
 
-    const handleFullScreenOut = () => {
-      onFullScreen(false);
-      setIsFull(false);
-      showNavigationBar();
-    Orientation.lockToPortrait()
-    };
+      const handleChangeBitrate = (newIndex) => {
+        setLoading(true);
+        setBitrateIndex(newIndex);
+      };
 
-    const handleChangeConfig = (config) => {
-      playerRef.current.setNativeProps(config);
-    };
+      const isOrientationLandscape = isLandscape;
 
-    const handleChangeBitrate = (newIndex) => {
-      setLoading(true);
-      setBitrateIndex(newIndex);
-    };
+      const fullscreenStyle = {
 
-    const isOrientationLandscape = isLandscape;
+        width: isOrientationLandscape
+            ? Math.max(screen.width, screen.height)
+            : Math.min(screen.width, screen.height),
+        height: isOrientationLandscape
+            ? Math.min(screen.width, screen.height)
+            : Math.max(screen.width, screen.height),
+        zIndex: 100,
+      };
 
-    const fullscreenStyle = {
-
-      width: isOrientationLandscape
-        ? Math.max(screen.width, screen.height)
-        : Math.min(screen.width, screen.height),
-      height: isOrientationLandscape
-        ? Math.min(screen.width, screen.height)
-        : Math.max(screen.width, screen.height),
-      zIndex: 100,
-    };
-
-    const fullwindowStyle = {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: isOrientationLandscape
-        ? Math.max(window.width, window.height)
-        : Math.min(window.width, window.height),
-      height: isOrientationLandscape
-        ? Math.min(window.width, window.height)
-        : Math.max(window.width, window.height),
-    };
-    return (
-      <View style={[styles.base, isFull ? isCustomStyle?style:fullscreenStyle : style]}>
-        <TXViewPlayer
-          {...restProps}
-          ref={playerRef}
-          source={playSource}
-          setAutoPlay={setAutoPlay}
-          selectBitrateIndex={bitrateIndex}
-          style={isFull ? isCustomStyle? StyleSheet.absoluteFill : fullwindowStyle : StyleSheet.absoluteFill}
-          onTXVodPrepare={() => {
-            if (isPlaying) {
-              playerRef.current.startPlay();
-            }
-            setCurrent(0);
-            setBuffer(0);
-            onPrepare();
-          }}
-          onTXVodLoading={() => {
-            setLoading(true);
-          }}
-          onTXVodLoadingEnd={() => {
-            setLoading(false);
-          }}
-          onTXVodBegin={() => {
-            setError(false);
-            setLoading(false);
-            setIsStopPlay(false);
-            setIsPlaying(true);
-            setIsStart(true);
-          }}
-          onTXVodProgress={({ nativeEvent }) => {
-            setTotal(nativeEvent.duration);
-            setCurrent(nativeEvent.progress);
-            setBuffer(nativeEvent.buffered);
-            onProgress(nativeEvent);
-          }}
-          onTXVodEnd={() => {
-            setIsComplate(true);
-            setIsPlaying(false);
-            onCompletion();
-          }}
-          onTXVodError={({ nativeEvent }) => {
-            setError(true);
-            setErrorObj(nativeEvent);
-          }}
-          onTXVodBitrateChange={({ nativeEvent }) => {
-            setBitrateIndex(nativeEvent.index);
-            onChangeBitrate(nativeEvent);
-          }}
-          onTXVodBitrateReady={({ nativeEvent }) => {
-            setBitrateList(nativeEvent.bitrates);
-          }}
-        >
-          <StatusBar hidden={isFull} />
-          <ControlerView
-            {...restProps}
-            title={title}
-            isFull={isFull}
-            current={current}
-            buffer={buffer}
-            total={total}
-            isError={error}
-            poster={poster}
-            isStart={isStart}
-            isLoading={loading}
-            errorObj={errorObj}
-            isPlaying={isPlaying}
-            loadingObj={{}}
-            themeColor={themeColor}
-            playSource={playSource}
-            bitrateList={bitrateList}
-            bitrateIndex={bitrateIndex}
-            onSlide={handleSlide}
-            onPressPlay={handlePlay}
-            onPressPause={handlePause}
-            onPressReload={handleReload}
-            onPressFullIn={handleFullScreenIn}
-            onPressFullOut={handleFullScreenOut}
-            onChangeConfig={handleChangeConfig}
-            onChangeBitrate={handleChangeBitrate}
-          />
-        </TXViewPlayer>
-      </View>
-    );
-  }
+      const fullwindowStyle = {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: isOrientationLandscape
+            ? Math.max(window.width, window.height)
+            : Math.min(window.width, window.height),
+        height: isOrientationLandscape
+            ? Math.min(window.width, window.height)
+            : Math.max(window.width, window.height),
+      };
+      return (
+          <View style={[styles.base, isFull ? isCustomStyle?style:fullscreenStyle : style]}>
+            <TXViewPlayer
+                {...restProps}
+                ref={playerRef}
+                source={playSource}
+                setAutoPlay={setAutoPlay}
+                selectBitrateIndex={bitrateIndex}
+                style={isFull ? isCustomStyle? StyleSheet.absoluteFill : fullwindowStyle : StyleSheet.absoluteFill}
+                onTXVodPrepare={() => {
+                  if (isPlaying) {
+                    playerRef.current.startPlay();
+                  }
+                  setCurrent(0);
+                  setBuffer(0);
+                  onPrepare();
+                }}
+                onTXVodLoading={() => {
+                  setLoading(true);
+                }}
+                onTXVodLoadingEnd={() => {
+                  setLoading(false);
+                }}
+                onTXVodBegin={() => {
+                  setError(false);
+                  setLoading(false);
+                  setIsStopPlay(false);
+                  setIsPlaying(true);
+                  setIsStart(true);
+                }}
+                onTXVodProgress={({ nativeEvent }) => {
+                  setTotal(nativeEvent.duration);
+                  setCurrent(nativeEvent.progress);
+                  setBuffer(nativeEvent.buffered);
+                  onProgress(nativeEvent);
+                }}
+                onTXVodEnd={() => {
+                  setIsComplate(true);
+                  setIsPlaying(false);
+                  onCompletion();
+                }}
+                onTXVodError={({ nativeEvent }) => {
+                  setError(true);
+                  setErrorObj(nativeEvent);
+                }}
+                onTXVodBitrateChange={({ nativeEvent }) => {
+                  setBitrateIndex(nativeEvent.index);
+                  onChangeBitrate(nativeEvent);
+                }}
+                onTXVodBitrateReady={({ nativeEvent }) => {
+                  setBitrateList(nativeEvent.bitrates);
+                }}
+            >
+              <StatusBar hidden={isFull} />
+              <ControlerView
+                  {...restProps}
+                  title={title}
+                  isFull={isFull}
+                  current={current}
+                  buffer={buffer}
+                  total={total}
+                  isError={error}
+                  poster={poster}
+                  isStart={isStart}
+                  isLoading={loading}
+                  errorObj={errorObj}
+                  isPlaying={isPlaying}
+                  loadingObj={{}}
+                  themeColor={themeColor}
+                  playSource={playSource}
+                  bitrateList={bitrateList}
+                  bitrateIndex={bitrateIndex}
+                  onSlide={handleSlide}
+                  onPressPlay={handlePlay}
+                  onPressPause={handlePause}
+                  onPressReload={handleReload}
+                  onPressFullIn={handleFullScreenIn}
+                  onPressFullOut={handleFullScreenOut}
+                  onChangeConfig={handleChangeConfig}
+                  onChangeBitrate={handleChangeBitrate}
+              />
+            </TXViewPlayer>
+          </View>
+      );
+    }
 );
 Player.propTypes = {
   ...TXViewPlayer.propTypes,
   source: PropTypes.string, // 播放地址
   poster: Image.propTypes.source, // 封面图
   onFullScreen: PropTypes.func, // 全屏回调事件
+  onPlay: PropTypes.func, // 播放暂停事件
   onCompletion: PropTypes.func, // 播放完成事件
   enableFullScreen: PropTypes.bool, // 是否允许全屏
   themeColor: PropTypes.string, // 播放器主题
   enableCast: PropTypes.bool, // 是否显示投屏按钮
-    progressBar: PropTypes.bool, // 是否显示进度条
-    isCustomStyle: PropTypes.bool, // 全屏是否使用自定义样式
+  progressBar: PropTypes.bool, // 是否显示进度条
+  isCustomStyle: PropTypes.bool, // 全屏是否使用自定义样式
   onCastClick: PropTypes.func, // 投屏按钮点击事件
   onChangeBitrate: PropTypes.func, // 切换清晰度
   onProgress: PropTypes.func, // 进度回调
@@ -286,6 +291,7 @@ Player.propTypes = {
 
 Player.defaultProps = {
   onFullScreen: () => {},
+  onPlay: () => {},
   onCompletion: () => {},
   onCastClick: () => {},
   onChangeBitrate: () => {},

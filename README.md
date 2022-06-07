@@ -19,7 +19,7 @@ import RNTXplayer from '@tg1518/react-native-txplayer';
 
 const source='http://200024424.vod.myqcloud.com/200024424_709ae516bdf811e6ad39991f76a4df69.f20.mp4'
 
-<RNTXplayer source={source} progressBar={true} style={{ width: screenWidth, height: 200 }} />;
+    <RNTXplayer source={source} progressBar={true} style={{ width: screenWidth, height: 200 }} />;
 ```
 ## 更新
 2022/4/19
@@ -37,6 +37,7 @@ const source='http://200024424.vod.myqcloud.com/200024424_709ae516bdf811e6ad3999
 | progressBar      | 是否显示进度条     |
 | themeColor       | 主题色           |
 | onFullScreen     | 全屏事件         |
+| onPlay           | 播放暂停事件         |
 | onCompletion     | 播放完毕事件     |
 | enableCast       | 是否显示投屏按钮 |
 | isCustomStyle    | 全屏是否使用自定义样式 |
@@ -68,6 +69,6 @@ import TXViewPlayer from 'react-native-txplayer/TXViewPlayer';
 
 // TXViewPlayer 支持参数可见源码 TXViewPlayer.propTypes
 <TXViewPlayer>
-  <CustomUi />
+    <CustomUi />
 </TXViewPlayer>;
 ```

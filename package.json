@@ -1,6 +1,6 @@
 {
   "name": "@tg1518/react-native-txplayer",
-  "version": "1.0.37",
+  "version": "1.0.38",
   "description": "RN腾讯云播放组件",
   "main": "src/index.js",
   "scripts": {
