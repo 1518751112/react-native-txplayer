@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import { StyleSheet, StatusBar, Image, View } from 'react-native';
+import { StyleSheet, StatusBar, Image, View, Platform, NativeModules } from 'react-native';
 import PropTypes from 'prop-types';
 import { useBackHandler, useAppState, useDimensions } from '@react-native-community/hooks';
 import { hideNavigationBar, showNavigationBar } from 'react-native-navigation-bar-color';
@@ -14,6 +14,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
   },
 });
+
+const { OS } = Platform
+const {
+  StatusBarManager: { HEIGHT },
+} = NativeModules
+let height = OS === 'android' ? StatusBar.currentHeight : HEIGHT
 
 const Player = forwardRef(
     (
@@ -185,14 +191,14 @@ const Player = forwardRef(
             : Math.max(window.width, window.height),
       };
       return (
-          <View style={[styles.base, isFull ? isCustomStyle?style:fullscreenStyle : style]}>
+          <View style={[styles.base, isFull ? isCustomStyle ? style : fullscreenStyle : style]}>
             <TXViewPlayer
                 {...restProps}
                 ref={playerRef}
                 source={playSource}
                 setAutoPlay={setAutoPlay}
                 selectBitrateIndex={bitrateIndex}
-                style={isFull ? isCustomStyle? StyleSheet.absoluteFill : fullwindowStyle : StyleSheet.absoluteFill}
+                style={[isFull ? isCustomStyle ? StyleSheet.absoluteFill : fullwindowStyle : StyleSheet.absoluteFill, isFull && Platform.OS==="android" && {marginLeft: height}]}
                 onTXVodPrepare={() => {
                   if (isPlaying) {
                     playerRef.current.startPlay();
@@ -290,13 +296,13 @@ Player.propTypes = {
 };
 
 Player.defaultProps = {
-  onFullScreen: () => {},
-  onPlay: () => {},
-  onCompletion: () => {},
-  onCastClick: () => {},
-  onChangeBitrate: () => {},
-  onProgress: () => {},
-  onPrepare: () => {},
+  onFullScreen: () => { },
+  onPlay: () => { },
+  onCompletion: () => { },
+  onCastClick: () => { },
+  onChangeBitrate: () => { },
+  onProgress: () => { },
+  onPrepare: () => { },
   themeColor: '#F85959',
   enableHardwareDecoder: false,
   setSpeed: 1.0,
