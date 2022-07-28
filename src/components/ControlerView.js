@@ -47,16 +47,16 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: controlerHeight,
+    height: controlerHeight + 20,
     width: '100%',
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
   },
   bottom: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: controlerHeight,
+    height: controlerHeight + 20,
     width: '100%',
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
     justifyContent: 'space-between',
   },
   bottomSlide: {
@@ -167,7 +167,7 @@ function ControlerView({
       {!isStart && <Image source={poster} resizeMode="cover" style={StyleSheet.absoluteFill} />}
       <AnimateView
         style={[
-          styles.header,
+          styles.header, isFull && {paddingHorizontal: 50},
           { opacity: opacityAnimate, transform: [{ translateY: headerAnimate }] },
         ]}
       >
@@ -211,7 +211,7 @@ function ControlerView({
       </PressView>
       <AnimateView
         style={[
-          styles.bottom,
+          styles.bottom,isFull && {paddingHorizontal: 50},
           { opacity: opacityAnimate, transform: [{ translateY: bottomAnimate }] },
         ]}
       >
