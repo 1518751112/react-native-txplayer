@@ -6,7 +6,7 @@ import { hideNavigationBar, showNavigationBar } from 'react-native-navigation-ba
 
 import TXViewPlayer from './TXViewPlayer';
 import ControlerView from './components/ControlerView';
-import Orientation from "react-native-orientation-locker";
+import Orientation from "react-native-orientation";
 
 const styles = StyleSheet.create({
   base: {
